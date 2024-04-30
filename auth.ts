@@ -12,7 +12,7 @@ async function getUser(email: string): Promise<User | undefined> {
     return user.rows[0];
   } catch (error) {
     console.error('Failed to fetch user:', error);
-    throw new Error('Failed to fetch user');
+    throw new Error('Failed to fetch user.');
   }
 }
 
@@ -27,12 +27,15 @@ export const { auth, signIn, signOut } = NextAuth({
 
         if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data;
+
           const user = await getUser(email);
           if (!user) return null;
-          const passwordMatch = await bcrypt.compare(password, user.password);
-          if(passwordMatch) return user;
+
+          const passwordsMatch = await bcrypt.compare(password, user.password);
+          if (passwordsMatch) return user;
         }
-        console.log("Invalid credentials");
+
+        console.log('Invalid credentials');
         return null;
       },
     }),
